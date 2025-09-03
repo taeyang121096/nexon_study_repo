@@ -1,0 +1,40 @@
+version: "3"
+
+services:
+  controller:
+    image: ngrinder/controller:latest
+    container_name: ngrinder-controller
+    ports:
+      - "8085:80"
+    expose:
+      - "16001"
+    volumes:
+      - ngrinder-controller-data:/opt/ngrinder-controller
+    networks:
+      - ngrinder-net
+
+  agent1:
+    image: ngrinder/agent:latest
+    container_name: ngrinder-agent1
+    depends_on:
+      - controller
+    environment:
+      - CONTROLLER_IP=controller
+    networks:
+      - ngrinder-net
+
+  agent2:
+    image: ngrinder/agent:latest
+    container_name: ngrinder-agent2
+    depends_on:
+      - controller
+    environment:
+      - CONTROLLER_IP=controller
+    networks:
+      - ngrinder-net
+
+volumes:
+  ngrinder-controller-data:   
+networks:
+  ngrinder-net:
+    driver: bridge
